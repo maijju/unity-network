@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "698764070195",
+    "project_id": "pong-8842f",
+    "storage_bucket": "pong-8842f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698764070195:android:2d411c5661aa5b59598246",
+        "android_client_info": {
+          "package_name": "com.maiju.firebasedemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGRQz3eQbbEqSdhHcVFEvTtToH-YbQmnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
