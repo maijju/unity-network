@@ -17,42 +17,25 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private static GameManager instance;
 
-    public Text scoreText;
     public Transform[] spawnPositions;
     public GameObject playerPrefab;
-    public GameObject ballPrefab;
 
-    private int[] playerScores;
 
     private void Start()
     {
-
+        SpawnPlayer();
     }
 
     private void SpawnPlayer()
     {
+        var localPlayerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        var spawnPosition = spawnPositions[localPlayerIndex % spawnPositions.Length];
 
-    }
-
-    private void SpawnBall()
-    {
-
+        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition.position, Quaternion.identity);
     }
 
     public override void OnLeftRoom()
     {
-
-    }
-
-    public void AddScore(int playerNumber, int score)
-    {
-
-    }
-
-    
-    [PunRPC]
-    private void RPCUpdateScoreText(string player1ScoreText, string player2ScoreText)
-    {
-
+        SceneManager.LoadScene("Lobby");
     }
 }
