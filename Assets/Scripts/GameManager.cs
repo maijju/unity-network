@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public Transform[] spawnPositions;
     public GameObject playerPrefab;
+    public CinemachineVirtualCamera virtualCamera;
 
 
     private void Start()
@@ -31,7 +33,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         var localPlayerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         var spawnPosition = spawnPositions[localPlayerIndex % spawnPositions.Length];
 
-        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition.position, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition.position, Quaternion.identity);
+        virtualCamera.Follow = player.transform;
+        virtualCamera.LookAt = player.transform;
     }
 
     public override void OnLeftRoom()

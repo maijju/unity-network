@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+using System;
 
 public class Player : MonoBehaviourPun
 {
     public float moveSpeed = 5f;          // 이동 속도
     public float rotationSpeed = 720f;   // 회전 속도
-
+    private Vector3 moveDirection;       // 이동 방향
     private Rigidbody rb;
 
     private void Awake()
@@ -14,9 +15,15 @@ public class Player : MonoBehaviourPun
         rb.constraints = RigidbodyConstraints.FreezeRotation; // Rigidbody 회전 고정
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        // 네트워크에서 로컬 플레이어만 이동 처리
+        UpdateAnimator();
+        // 네트워크에서 로컬 플레이어만 입력 처리
+        Move();
+    }
+
+    private void Move()
+    {
         if (!photonView.IsMine) return;
 
         // 입력 값 가져오기
@@ -29,16 +36,30 @@ public class Player : MonoBehaviourPun
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) horizontal += 1f;
 
         // 이동 방향 계산
-        Vector3 moveDirection = new Vector3(horizontal, 0, vertical).normalized;
-
-        // 이동 처리
-        rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+        moveDirection = new Vector3(horizontal, 0, vertical).normalized;
 
         // 회전 처리
         if (moveDirection.sqrMagnitude > 0.01f) // 이동 중일 때만 회전
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            rb.rotation = Quaternion.RotateTowards(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
+    }
+
+    private void UpdateAnimator()
+    {
+        Vector3 velocity = rb.velocity;
+        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+        GetComponent<Animator>().SetFloat("forwardSpeed", localVelocity.z);
+
+    }
+
+    private void FixedUpdate()
+    {
+        // 네트워크에서 로컬 플레이어만 이동 처리
+        if (!photonView.IsMine) return;
+
+        // Rigidbody의 속도를 직접 설정하여 부드럽게 이동
+        rb.velocity = moveDirection * moveSpeed + new Vector3(0, rb.velocity.y, 0); // 중력(y축) 보존
     }
 }
